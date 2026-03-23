@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>OpenGradient Model Finder</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+    h1 {
+      color: #0f172a;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      width: 100%;
+      background: #06b6d4;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      background: #ecfeff;
+      padding: 15px;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>OpenGradient Model Finder</h1>
+
+  <div class="box">
+    <label>Task</label>
+    <select id="task">
+      <option>Text generation</option>
+      <option>Data analysis</option>
+      <option>Real-time inference</option>
+      <option>Forecasting</option>
+    </select>
+
+    <button onclick="findModel()">Find model</button>
+
+    <div class="result" id="result"></div>
+  </div>
+</div>
+
+<script>
+function findModel() {
+  let task = document.getElementById("task").value;
+  let result = "";
+
+  if (task === "Text generation") {
+    result = "Look for: LLMs, instruction models, text generators";
+  }
+  if (task === "Data analysis") {
+    result = "Look for: analytics models, structured reasoning";
+  }
+  if (task === "Real-time inference") {
+    result = "Look for: low-latency models, optimized models";
+  }
+  if (task === "Forecasting") {
+    result = "Look for: time-series, prediction models";
+  }
+
+  document.getElementById("result").innerText = result;
+}
+</script>
+
+</body>
+</html>
