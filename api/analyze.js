@@ -1,62 +1,104 @@
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { task } = req.body;
+    const { task } = req.body || {};
 
-    if (!task) {
-      return res.status(400).json({ error: "No task provided" });
+    if (!task || !task.trim()) {
+      return res.status(400).json({ error: "Task is required" });
     }
 
     const prompt = `
-You are an AI assistant.
+You are an AI assistant inside a tool called "OpenGradient AI Model Finder".
 
-Analyze the task and return ONLY valid JSON.
+The user describes a task. Your job is to convert that task into a practical model discovery suggestion.
 
-Format:
+Return ONLY valid JSON in exactly this format:
 {
-  "category": "...",
-  "direction": "...",
-  "keywords": ["...", "..."],
-  "confidence": 0.0
+  "status": "string",
+  "category": "string",
+  "direction": "string",
+  "keywords": ["string", "string", "string"],
+  "confidence": 0,
+  "confidenceMessage": "string"
 }
 
-Task:
-${task}
-`;
+Rules:
+- Output JSON only
+- No markdown
+- No code fences
+- Keep category short
+- Keep direction practical
+- keywords must contain 3 to 6 short phrases
+- confidence must be an integer from 0 to 100
+- confidenceMessage should briefly explain the confidence
 
-    const response = await client.responses.create({
-      model: "gpt-4.1-mini",
-      input: prompt,
+User task:
+${task}
+`.trim();
+
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        input: prompt
+      })
     });
 
-    const text = response.output_text;
+    const raw = await response.text();
 
-    // 🔥 SAFE PARSE (не падає)
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = {
-        category: "General AI task",
-        direction: text,
-        keywords: ["ai", "model"],
-        confidence: 0.5,
-      };
+    if (!response.ok) {
+      return res.status(500).json({
+        error: `OpenAI error: ${raw}`
+      });
     }
 
-    res.status(200).json(data);
+    let parsedApi;
+    try {
+      parsedApi = JSON.parse(raw);
+    } catch {
+      return res.status(500).json({
+        error: `OpenAI returned non-JSON: ${raw}`
+      });
+    }
 
-  } catch (e) {
-    console.error(e);
-    res.status(500).json({ error: "Server error" });
+    const outputText = parsedApi.output_text || "";
+
+    let parsedResult;
+    try {
+      parsedResult = JSON.parse(outputText);
+    } catch {
+      const match = outputText.match(/\{[\s\S]*\}/);
+      if (!match) {
+        return res.status(500).json({
+          error: `Model did not return valid JSON: ${outputText}`
+        });
+      }
+      parsedResult = JSON.parse(match[0]);
+    }
+
+    return res.status(200).json({
+      status: parsedResult.status || "Analysis complete.",
+      category: parsedResult.category || "Unknown",
+      direction: parsedResult.direction || "No direction returned.",
+      keywords: Array.isArray(parsedResult.keywords)
+        ? parsedResult.keywords
+        : ["OpenGradient", "model search", "AI"],
+      confidence: Number.isInteger(parsedResult.confidence)
+        ? parsedResult.confidence
+        : 60,
+      confidenceMessage:
+        parsedResult.confidenceMessage || "Confidence was not provided."
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error?.message || "Server error"
+    });
   }
 }
