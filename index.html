@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OpenGradient AI Model Finder</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -20,14 +18,9 @@
       padding: 40px 20px;
     }
 
-    .container {
-      max-width: 980px;
-      margin: 0 auto;
-    }
+    .container { max-width: 980px; margin: 0 auto; }
 
-    .hero {
-      margin-bottom: 24px;
-    }
+    .hero { margin-bottom: 24px; }
 
     .eyebrow {
       display: inline-block;
@@ -129,9 +122,7 @@
       transition: 0.2s ease;
     }
 
-    .chip:hover {
-      background: #cbd5e1;
-    }
+    .chip:hover { background: #cbd5e1; }
 
     .primary-btn,
     .secondary-btn {
@@ -157,14 +148,19 @@
       box-shadow: 0 14px 28px rgba(6, 182, 212, 0.32);
     }
 
+    .primary-btn:disabled {
+      opacity: 0.75;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
     .secondary-btn {
       background: #0f172a;
       color: white;
     }
 
-    .secondary-btn:hover {
-      background: #020617;
-    }
+    .secondary-btn:hover { background: #020617; }
 
     .helper {
       margin-top: 16px;
@@ -257,7 +253,7 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #22c55e, #16a34a);
-      transition: width 0.3s ease;
+      transition: width 0.35s ease;
     }
 
     .footer-note {
@@ -268,20 +264,15 @@
     }
 
     @media (max-width: 860px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-
-      h1 {
-        font-size: 34px;
-      }
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 34px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="hero">
-      <div class="eyebrow">Community Build • AI-style Discovery Tool</div>
+      <div class="eyebrow">Community Build • Real AI Discovery Tool</div>
       <h1>OpenGradient AI Model Finder</h1>
       <div class="subtitle">
         Describe your task in natural language and get a smarter starting point for model discovery:
@@ -293,7 +284,7 @@
       <div class="panel">
         <div class="panel-title">Describe your task</div>
         <div class="panel-subtitle">
-          Write what you want to do. The tool will map your idea to a model direction on OpenGradient.
+          Write what you want to do. The tool will ask a real AI model to map your idea to a model direction on OpenGradient.
         </div>
 
         <label for="input">Task description</label>
@@ -306,14 +297,14 @@
           <button class="chip" onclick="fillPrompt('I need a model for writing and text generation')">Text generation</button>
         </div>
 
-        <button class="primary-btn" onclick="analyze()">Analyze & suggest model</button>
+        <button class="primary-btn" id="analyzeBtn" onclick="analyze()">Analyze & suggest model</button>
 
         <a href="https://opengradient.ai" target="_blank">
           <button class="secondary-btn">Open Model Hub</button>
         </a>
 
         <div class="helper">
-          This tool does not pick a final model for you. It helps turn a vague task into a clearer search direction.
+          This tool does not pick a final model for you. It gives you a clearer search direction using a real AI response.
         </div>
       </div>
 
@@ -370,181 +361,78 @@
       document.getElementById("input").value = text;
     }
 
-    function sleep(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    async function typeText(element, text) {
-      element.innerText = "";
-      for (let i = 0; i < text.length; i++) {
-        element.innerText += text[i];
-        await sleep(10);
-      }
-    }
-
-    function random(arr) {
-      return arr[Math.floor(Math.random() * arr.length)];
-    }
-
     function setKeywords(words) {
-      const keywordsBox = document.getElementById("keywords");
-      keywordsBox.innerHTML = "";
+      const box = document.getElementById("keywords");
+      box.innerHTML = "";
       words.forEach(word => {
         const span = document.createElement("span");
         span.className = "tag";
         span.innerText = word;
-        keywordsBox.appendChild(span);
+        box.appendChild(span);
       });
     }
 
-    async function analyze() {
-      const input = document.getElementById("input").value.toLowerCase().trim();
+    function setLoadingState() {
+      document.getElementById("status").innerText = "Analyzing your request...";
+      document.getElementById("category").innerText = "...";
+      document.getElementById("direction").innerText = "Thinking...";
+      document.getElementById("confidenceText").innerText = "Analyzing...";
+      document.getElementById("confidenceFill").style.width = "18%";
+      setKeywords(["analyzing", "task", "intent"]);
+    }
 
-      const status = document.getElementById("status");
-      const category = document.getElementById("category");
-      const direction = document.getElementById("direction");
-      const confidenceText = document.getElementById("confidenceText");
-      const fill = document.getElementById("confidenceFill");
+    function setErrorState(message) {
+      document.getElementById("status").innerText = message;
+      document.getElementById("category").innerText = "Unavailable";
+      document.getElementById("direction").innerText = "The AI response could not be loaded right now.";
+      document.getElementById("confidenceText").innerText = "Please try again.";
+      document.getElementById("confidenceFill").style.width = "0%";
+      setKeywords(["retry", "server", "ai"]);
+    }
+
+    async function analyze() {
+      const input = document.getElementById("input").value.trim();
+      const btn = document.getElementById("analyzeBtn");
 
       if (!input) {
-        await typeText(status, "Please describe your task first.");
-        category.innerText = "No category detected";
-        direction.innerText = "Add a short description of what you want the model to do.";
-        confidenceText.innerText = "Low confidence because no task was provided.";
-        fill.style.width = "10%";
+        document.getElementById("status").innerText = "Please describe your task first.";
+        document.getElementById("category").innerText = "No category detected";
+        document.getElementById("direction").innerText = "Add a short description of what you want the model to do.";
+        document.getElementById("confidenceText").innerText = "Low confidence because no task was provided.";
+        document.getElementById("confidenceFill").style.width = "10%";
         setKeywords(["text", "data", "prediction", "real-time"]);
         return;
       }
 
-      status.innerText = "Analyzing your request...";
-      category.innerText = "...";
-      direction.innerText = "Thinking...";
-      confidenceText.innerText = "Analyzing...";
-      fill.style.width = "20%";
-      setKeywords(["analyzing", "task", "intent"]);
+      btn.disabled = true;
+      btn.innerText = "Analyzing...";
+      setLoadingState();
 
-      await sleep(800);
+      try {
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task: input })
+        });
 
-      const hasText =
-        input.includes("text") ||
-        input.includes("write") ||
-        input.includes("content") ||
-        input.includes("generate");
+        const data = await response.json();
 
-      const hasData =
-        input.includes("data") ||
-        input.includes("analysis") ||
-        input.includes("analytics") ||
-        input.includes("structured");
+        if (!response.ok) {
+          throw new Error(data.error || "Request failed");
+        }
 
-      const hasRealtime =
-        input.includes("real-time") ||
-        input.includes("realtime") ||
-        input.includes("fast") ||
-        input.includes("low latency") ||
-        input.includes("live");
-
-      const hasForecast =
-        input.includes("predict") ||
-        input.includes("prediction") ||
-        input.includes("forecast") ||
-        input.includes("price") ||
-        input.includes("crypto") ||
-        input.includes("trend");
-
-      let matches = 0;
-      if (hasText) matches++;
-      if (hasData) matches++;
-      if (hasRealtime) matches++;
-      if (hasForecast) matches++;
-
-      let result = {
-        status: "",
-        category: "",
-        direction: "",
-        keywords: [],
-        confidence: 0,
-        confidenceMessage: ""
-      };
-
-      if (hasForecast) {
-        result = {
-          status: "Analysis complete. Detected a forecasting or prediction-style task.",
-          category: "Forecasting / Prediction",
-          direction: random([
-            "Start with time-series, price prediction, or trend-oriented models. If the task is market-related, include finance or crypto-specific keywords in your search.",
-            "Look for models designed for sequential data, forecasting, or price movement estimation. Add crypto or financial context if relevant.",
-            "Focus on prediction-oriented models that handle trends, market signals, or time-dependent data."
-          ]),
-          keywords: ["forecasting", "prediction", "time-series", "crypto", "price model"],
-          confidence: matches > 1 ? 78 : 92,
-          confidenceMessage: matches > 1
-            ? "Good confidence, but your request overlaps with other categories."
-            : "High confidence based on strong prediction-related keywords."
-        };
-      } else if (hasRealtime) {
-        result = {
-          status: "Analysis complete. Detected a real-time inference task.",
-          category: "Real-time Inference",
-          direction: random([
-            "Look for lightweight or optimized low-latency models. Prioritize speed, responsiveness, and efficient inference behavior.",
-            "Search for models designed for fast inference, low latency, and real-time delivery in production workflows.",
-            "Focus on speed-first model types that can handle live input or rapid response requirements."
-          ]),
-          keywords: ["real-time inference", "fast model", "low latency", "optimized model"],
-          confidence: matches > 1 ? 76 : 90,
-          confidenceMessage: matches > 1
-            ? "Good confidence with some overlap from other task types."
-            : "High confidence based on strong speed and latency signals."
-        };
-      } else if (hasData) {
-        result = {
-          status: "Analysis complete. Detected a data analysis task.",
-          category: "Data Analysis",
-          direction: random([
-            "Look for analytics or structured reasoning models that can return interpretable outputs, summaries, or structured results.",
-            "Search for models that emphasize reasoning, analytical workflows, or machine-readable outputs.",
-            "Focus on models that can process data-oriented tasks and produce structured or explainable results."
-          ]),
-          keywords: ["data analysis", "analytics model", "structured output", "reasoning"],
-          confidence: matches > 1 ? 74 : 89,
-          confidenceMessage: matches > 1
-            ? "Good confidence, though the task may also involve another model type."
-            : "High confidence based on analysis-oriented language."
-        };
-      } else if (hasText) {
-        result = {
-          status: "Analysis complete. Detected a text generation task.",
-          category: "Text Generation",
-          direction: random([
-            "Start with general language models or instruction-following models. Focus on generation quality, prompt following, and output clarity.",
-            "Look for LLMs or content-generation models that handle instructions well and produce coherent output.",
-            "Search for prompt-driven language models optimized for writing, generation, or instruction-based text tasks."
-          ]),
-          keywords: ["text generation", "LLM", "instruction model", "prompts"],
-          confidence: matches > 1 ? 75 : 88,
-          confidenceMessage: matches > 1
-            ? "Good confidence with partial overlap from other categories."
-            : "High confidence based on text-generation keywords."
-        };
-      } else {
-        result = {
-          status: "The task is still too broad to classify clearly.",
-          category: "Unclear / Mixed task",
-          direction: "Try rewriting your request with more explicit words. Mention whether you want text generation, data analysis, prediction, or real-time inference.",
-          keywords: ["text", "analytics", "prediction", "real-time"],
-          confidence: 42,
-          confidenceMessage: "Medium confidence because the tool could not detect a strong category."
-        };
+        document.getElementById("status").innerText = data.status;
+        document.getElementById("category").innerText = data.category;
+        document.getElementById("direction").innerText = data.direction;
+        document.getElementById("confidenceText").innerText = data.confidenceMessage;
+        document.getElementById("confidenceFill").style.width = `${data.confidence}%`;
+        setKeywords(Array.isArray(data.keywords) ? data.keywords : ["OpenGradient", "model search"]);
+      } catch (error) {
+        setErrorState(error.message || "Something went wrong.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Analyze & suggest model";
       }
-
-      await typeText(status, result.status);
-      await typeText(category, result.category);
-      await typeText(direction, result.direction);
-      await typeText(confidenceText, result.confidenceMessage);
-
-      fill.style.width = result.confidence + "%";
-      setKeywords(result.keywords);
     }
   </script>
 </body>
