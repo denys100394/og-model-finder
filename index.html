@@ -50,6 +50,16 @@ button {
   color: white;
 }
 
+.primary:hover {
+  background: #0891b2;
+}
+
+.dark {
+  background: #111827;
+  color: white;
+  margin-top: 10px;
+}
+
 .result {
   margin-top: 15px;
   background: #ecfeff;
@@ -58,10 +68,12 @@ button {
   white-space: pre-line;
 }
 
-.dark {
-  background: #111827;
-  color: white;
-  margin-top: 10px;
+.helper {
+  margin-top: 15px;
+  font-size: 14px;
+  background: #f1f5f9;
+  padding: 12px;
+  border-radius: 8px;
 }
 </style>
 </head>
@@ -76,15 +88,22 @@ button {
 <label>Describe your task</label>
 <textarea id="input" placeholder="Example: I need a model for crypto price prediction"></textarea>
 
-<button class="primary" onclick="analyze()">Find model</button>
+<button class="primary" onclick="analyze()">Analyze & suggest model</button>
 
 <div class="result" id="result">
-Enter your task and click "Find model"
+Try something like:
+- "I need a model for crypto prediction"
+- "I want fast real-time inference"
+- "Help me analyze data"
 </div>
 
 <a href="https://opengradient.ai" target="_blank">
 <button class="dark">Open Model Hub</button>
 </a>
+
+<div class="helper">
+This tool turns your idea into a model search direction on OpenGradient.
+</div>
 
 </div>
 </div>
@@ -133,16 +152,22 @@ real-time inference, fast models
     `;
   }
 
-  else if (input.includes("predict") || input.includes("forecast")) {
+  else if (input.includes("predict") || input.includes("forecast") || input.includes("crypto")) {
     result = `
-Detected: Forecasting
+Detected: Forecasting / Prediction
 
 Recommended:
 - Time-series models
 - Prediction models
 
 Search:
-forecasting, prediction
+forecasting, prediction, crypto models
+    `;
+  }
+
+  else if (input.trim() === "") {
+    result = `
+Please describe your task first.
     `;
   }
 
