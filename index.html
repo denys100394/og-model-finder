@@ -3,49 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>OpenGradient Model Finder</title>
+
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       background: #f4f7fb;
       margin: 0;
-      padding: 20px;
+      padding: 40px 20px;
     }
+
     .container {
-      max-width: 900px;
+      max-width: 800px;
       margin: auto;
     }
+
     h1 {
       color: #0f172a;
+      margin-bottom: 20px;
     }
+
     .box {
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 20px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+
     select {
       width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-    }
-    button {
-      margin-top: 15px;
       padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+
+    button {
       width: 100%;
+      padding: 14px;
       background: #06b6d4;
       color: white;
       border: none;
       border-radius: 8px;
+      font-size: 16px;
       cursor: pointer;
+      transition: 0.2s;
     }
+
+    button:hover {
+      background: #0891b2;
+    }
+
     .result {
       margin-top: 20px;
       background: #ecfeff;
       padding: 15px;
       border-radius: 10px;
+      white-space: pre-line;
+    }
+
+    .hub-btn {
+      margin-top: 10px;
+      background: #111827;
+    }
+
+    .hub-btn:hover {
+      background: #000;
     }
   </style>
 </head>
+
 <body>
 
 <div class="container">
@@ -53,6 +85,7 @@
 
   <div class="box">
     <label>Task</label>
+
     <select id="task">
       <option>Text generation</option>
       <option>Data analysis</option>
@@ -63,6 +96,11 @@
     <button onclick="findModel()">Find model</button>
 
     <div class="result" id="result"></div>
+
+    <a href="https://opengradient.ai" target="_blank">
+      <button class="hub-btn">Open Model Hub</button>
+    </a>
+
   </div>
 </div>
 
@@ -72,16 +110,64 @@ function findModel() {
   let result = "";
 
   if (task === "Text generation") {
-    result = "Look for: LLMs, instruction models, text generators";
+    result = `
+Model types:
+- LLMs
+- Instruction models
+
+Search terms:
+- text generation
+- LLM
+- prompts
+
+Tip:
+Focus on models that follow instructions well and generate clean text.
+    `;
   }
+
   if (task === "Data analysis") {
-    result = "Look for: analytics models, structured reasoning";
+    result = `
+Model types:
+- analytics models
+- structured reasoning
+
+Search terms:
+- data analysis
+- structured output
+
+Tip:
+Look for models that return structured or interpretable data.
+    `;
   }
+
   if (task === "Real-time inference") {
-    result = "Look for: low-latency models, optimized models";
+    result = `
+Model types:
+- low-latency models
+- optimized models
+
+Search terms:
+- real-time
+- fast inference
+
+Tip:
+Prioritize speed and lightweight models.
+    `;
   }
+
   if (task === "Forecasting") {
-    result = "Look for: time-series, prediction models";
+    result = `
+Model types:
+- time-series models
+- prediction models
+
+Search terms:
+- forecasting
+- prediction
+
+Tip:
+Focus on models designed for trend analysis.
+    `;
   }
 
   document.getElementById("result").innerText = result;
