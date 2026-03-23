@@ -102,6 +102,7 @@
       outline: none;
       transition: 0.2s ease;
       background: #fff;
+      font-family: Arial, sans-serif;
     }
 
     textarea:focus {
@@ -191,6 +192,7 @@
       color: #164e63;
       font-size: 14px;
       line-height: 1.6;
+      min-height: 88px;
     }
 
     .card {
@@ -213,6 +215,7 @@
       font-size: 18px;
       font-weight: 700;
       color: #0f172a;
+      min-height: 24px;
     }
 
     .card-text {
@@ -220,6 +223,7 @@
       color: #334155;
       line-height: 1.7;
       white-space: pre-line;
+      min-height: 24px;
     }
 
     .tags {
@@ -227,6 +231,7 @@
       flex-wrap: wrap;
       gap: 8px;
       margin-top: 6px;
+      min-height: 30px;
     }
 
     .tag {
@@ -365,16 +370,26 @@
       document.getElementById("input").value = text;
     }
 
-    function setResult(status, category, direction, keywords, confidence, confidenceText) {
-      document.getElementById("status").innerHTML = status;
-      document.getElementById("category").innerText = category;
-      document.getElementById("direction").innerText = direction;
-      document.getElementById("confidenceText").innerText = confidenceText;
-      document.getElementById("confidenceFill").style.width = confidence + "%";
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
 
+    async function typeText(element, text) {
+      element.innerText = "";
+      for (let i = 0; i < text.length; i++) {
+        element.innerText += text[i];
+        await sleep(10);
+      }
+    }
+
+    function random(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function setKeywords(words) {
       const keywordsBox = document.getElementById("keywords");
       keywordsBox.innerHTML = "";
-      keywords.forEach(word => {
+      words.forEach(word => {
         const span = document.createElement("span");
         span.className = "tag";
         span.innerText = word;
@@ -382,25 +397,60 @@
       });
     }
 
-    function analyze() {
+    async function analyze() {
       const input = document.getElementById("input").value.toLowerCase().trim();
 
+      const status = document.getElementById("status");
+      const category = document.getElementById("category");
+      const direction = document.getElementById("direction");
+      const confidenceText = document.getElementById("confidenceText");
+      const fill = document.getElementById("confidenceFill");
+
       if (!input) {
-        setResult(
-          'Please describe your task first.',
-          'No category detected',
-          'Add a short description of what you want the model to do.',
-          ['text', 'data', 'prediction', 'real-time'],
-          10,
-          'Low confidence because no task was provided.'
-        );
+        await typeText(status, "Please describe your task first.");
+        category.innerText = "No category detected";
+        direction.innerText = "Add a short description of what you want the model to do.";
+        confidenceText.innerText = "Low confidence because no task was provided.";
+        fill.style.width = "10%";
+        setKeywords(["text", "data", "prediction", "real-time"]);
         return;
       }
 
-      const hasText = input.includes("text") || input.includes("write") || input.includes("content") || input.includes("generate");
-      const hasData = input.includes("data") || input.includes("analysis") || input.includes("analytics") || input.includes("structured");
-      const hasRealtime = input.includes("real-time") || input.includes("realtime") || input.includes("fast") || input.includes("low latency") || input.includes("live");
-      const hasForecast = input.includes("predict") || input.includes("prediction") || input.includes("forecast") || input.includes("price") || input.includes("crypto") || input.includes("trend");
+      status.innerText = "Analyzing your request...";
+      category.innerText = "...";
+      direction.innerText = "Thinking...";
+      confidenceText.innerText = "Analyzing...";
+      fill.style.width = "20%";
+      setKeywords(["analyzing", "task", "intent"]);
+
+      await sleep(800);
+
+      const hasText =
+        input.includes("text") ||
+        input.includes("write") ||
+        input.includes("content") ||
+        input.includes("generate");
+
+      const hasData =
+        input.includes("data") ||
+        input.includes("analysis") ||
+        input.includes("analytics") ||
+        input.includes("structured");
+
+      const hasRealtime =
+        input.includes("real-time") ||
+        input.includes("realtime") ||
+        input.includes("fast") ||
+        input.includes("low latency") ||
+        input.includes("live");
+
+      const hasForecast =
+        input.includes("predict") ||
+        input.includes("prediction") ||
+        input.includes("forecast") ||
+        input.includes("price") ||
+        input.includes("crypto") ||
+        input.includes("trend");
 
       let matches = 0;
       if (hasText) matches++;
@@ -408,70 +458,93 @@
       if (hasRealtime) matches++;
       if (hasForecast) matches++;
 
+      let result = {
+        status: "",
+        category: "",
+        direction: "",
+        keywords: [],
+        confidence: 0,
+        confidenceMessage: ""
+      };
+
       if (hasForecast) {
-        setResult(
-          'Detected a forecasting or prediction-style task.',
-          'Forecasting / Prediction',
-          'Start with time-series, price prediction, or trend-oriented models. If the task is market-related, include finance or crypto-specific keywords in your search.',
-          ['forecasting', 'prediction', 'time-series', 'crypto', 'price model'],
-          matches > 1 ? 78 : 92,
-          matches > 1
-            ? 'Good confidence, but your request overlaps with other categories.'
-            : 'High confidence based on strong prediction-related keywords.'
-        );
-        return;
+        result = {
+          status: "Analysis complete. Detected a forecasting or prediction-style task.",
+          category: "Forecasting / Prediction",
+          direction: random([
+            "Start with time-series, price prediction, or trend-oriented models. If the task is market-related, include finance or crypto-specific keywords in your search.",
+            "Look for models designed for sequential data, forecasting, or price movement estimation. Add crypto or financial context if relevant.",
+            "Focus on prediction-oriented models that handle trends, market signals, or time-dependent data."
+          ]),
+          keywords: ["forecasting", "prediction", "time-series", "crypto", "price model"],
+          confidence: matches > 1 ? 78 : 92,
+          confidenceMessage: matches > 1
+            ? "Good confidence, but your request overlaps with other categories."
+            : "High confidence based on strong prediction-related keywords."
+        };
+      } else if (hasRealtime) {
+        result = {
+          status: "Analysis complete. Detected a real-time inference task.",
+          category: "Real-time Inference",
+          direction: random([
+            "Look for lightweight or optimized low-latency models. Prioritize speed, responsiveness, and efficient inference behavior.",
+            "Search for models designed for fast inference, low latency, and real-time delivery in production workflows.",
+            "Focus on speed-first model types that can handle live input or rapid response requirements."
+          ]),
+          keywords: ["real-time inference", "fast model", "low latency", "optimized model"],
+          confidence: matches > 1 ? 76 : 90,
+          confidenceMessage: matches > 1
+            ? "Good confidence with some overlap from other task types."
+            : "High confidence based on strong speed and latency signals."
+        };
+      } else if (hasData) {
+        result = {
+          status: "Analysis complete. Detected a data analysis task.",
+          category: "Data Analysis",
+          direction: random([
+            "Look for analytics or structured reasoning models that can return interpretable outputs, summaries, or structured results.",
+            "Search for models that emphasize reasoning, analytical workflows, or machine-readable outputs.",
+            "Focus on models that can process data-oriented tasks and produce structured or explainable results."
+          ]),
+          keywords: ["data analysis", "analytics model", "structured output", "reasoning"],
+          confidence: matches > 1 ? 74 : 89,
+          confidenceMessage: matches > 1
+            ? "Good confidence, though the task may also involve another model type."
+            : "High confidence based on analysis-oriented language."
+        };
+      } else if (hasText) {
+        result = {
+          status: "Analysis complete. Detected a text generation task.",
+          category: "Text Generation",
+          direction: random([
+            "Start with general language models or instruction-following models. Focus on generation quality, prompt following, and output clarity.",
+            "Look for LLMs or content-generation models that handle instructions well and produce coherent output.",
+            "Search for prompt-driven language models optimized for writing, generation, or instruction-based text tasks."
+          ]),
+          keywords: ["text generation", "LLM", "instruction model", "prompts"],
+          confidence: matches > 1 ? 75 : 88,
+          confidenceMessage: matches > 1
+            ? "Good confidence with partial overlap from other categories."
+            : "High confidence based on text-generation keywords."
+        };
+      } else {
+        result = {
+          status: "The task is still too broad to classify clearly.",
+          category: "Unclear / Mixed task",
+          direction: "Try rewriting your request with more explicit words. Mention whether you want text generation, data analysis, prediction, or real-time inference.",
+          keywords: ["text", "analytics", "prediction", "real-time"],
+          confidence: 42,
+          confidenceMessage: "Medium confidence because the tool could not detect a strong category."
+        };
       }
 
-      if (hasRealtime) {
-        setResult(
-          'Detected a real-time inference task.',
-          'Real-time Inference',
-          'Look for lightweight or optimized low-latency models. Prioritize speed, responsiveness, and efficient inference behavior.',
-          ['real-time inference', 'fast model', 'low latency', 'optimized model'],
-          matches > 1 ? 76 : 90,
-          matches > 1
-            ? 'Good confidence with some overlap from other task types.'
-            : 'High confidence based on strong speed and latency signals.'
-        );
-        return;
-      }
+      await typeText(status, result.status);
+      await typeText(category, result.category);
+      await typeText(direction, result.direction);
+      await typeText(confidenceText, result.confidenceMessage);
 
-      if (hasData) {
-        setResult(
-          'Detected a data analysis task.',
-          'Data Analysis',
-          'Look for analytics or structured reasoning models that can return interpretable outputs, summaries, or structured results.',
-          ['data analysis', 'analytics model', 'structured output', 'reasoning'],
-          matches > 1 ? 74 : 89,
-          matches > 1
-            ? 'Good confidence, though the task may also involve another model type.'
-            : 'High confidence based on analysis-oriented language.'
-        );
-        return;
-      }
-
-      if (hasText) {
-        setResult(
-          'Detected a text generation task.',
-          'Text Generation',
-          'Start with general language models or instruction-following models. Focus on generation quality, prompt following, and output clarity.',
-          ['text generation', 'LLM', 'instruction model', 'prompts'],
-          matches > 1 ? 75 : 88,
-          matches > 1
-            ? 'Good confidence with partial overlap from other categories.'
-            : 'High confidence based on text-generation keywords.'
-        );
-        return;
-      }
-
-      setResult(
-        'The task is still too broad to classify clearly.',
-        'Unclear / Mixed task',
-        'Try rewriting your request with more explicit words. Mention whether you want text generation, data analysis, prediction, or real-time inference.',
-        ['text', 'analytics', 'prediction', 'real-time'],
-        42,
-        'Medium confidence because the tool could not detect a strong category.'
-      );
+      fill.style.width = result.confidence + "%";
+      setKeywords(result.keywords);
     }
   </script>
 </body>
