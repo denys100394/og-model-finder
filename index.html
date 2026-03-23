@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OpenGradient AI Model Finder</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     :root {
       --bg1: #eef2ff;
@@ -15,13 +13,11 @@
       --bg3: #cffafe;
       --text: #0f172a;
       --muted: #64748b;
-      --card: rgba(255, 255, 255, 0.9);
+      --card: rgba(255, 255, 255, 0.92);
       --border: #dbe4ee;
       --primary: #06b6d4;
       --primary-dark: #0891b2;
       --dark: #0f172a;
-      --success: #22c55e;
-      --warning: #f59e0b;
       --soft: #ecfeff;
       --soft-border: #bae6fd;
     }
@@ -79,7 +75,7 @@
 
     .card {
       background: var(--card);
-      border: 1px solid rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(255,255,255,0.9);
       backdrop-filter: blur(10px);
       border-radius: 22px;
       box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
@@ -151,11 +147,6 @@
       transform: translateY(-1px);
     }
 
-    .actions {
-      display: grid;
-      gap: 12px;
-    }
-
     button {
       border: none;
       cursor: pointer;
@@ -194,6 +185,7 @@
     .secondary-btn {
       color: white;
       background: var(--dark);
+      margin-top: 12px;
     }
 
     .secondary-btn:hover {
@@ -367,7 +359,6 @@
       .layout {
         grid-template-columns: 1fr;
       }
-
       h1 {
         font-size: 40px;
       }
@@ -377,11 +368,9 @@
       body {
         padding: 24px 14px;
       }
-
       h1 {
         font-size: 34px;
       }
-
       .inline-actions {
         grid-template-columns: 1fr;
       }
@@ -390,7 +379,7 @@
 </head>
 <body>
   <div class="container">
-    <div class="eyebrow">Community Build • Advanced AI-style Discovery Tool</div>
+    <div class="eyebrow">Community Build • Advanced Free Discovery Tool</div>
     <h1>OpenGradient AI Model Finder</h1>
     <div class="subtitle">
       Describe your task in natural language and get a smart starting point for model discovery:
@@ -401,7 +390,7 @@
       <div class="card">
         <div class="section-title">Describe your task</div>
         <div class="section-subtitle">
-          Write what you want to do. This free version uses a richer local intelligence layer to map your idea into a model search direction.
+          Write what you want to do. This version runs fully without paid APIs and still gives structured, useful model-search guidance.
         </div>
 
         <label for="taskInput">Task description</label>
@@ -416,12 +405,11 @@
           <button class="chip" onclick="fillPrompt('I need image understanding and visual analysis')">Vision</button>
         </div>
 
-        <div class="actions">
-          <button class="primary-btn" id="analyzeBtn" onclick="analyzeTask()">Analyze & suggest model</button>
-          <a href="https://opengradient.ai" target="_blank" style="text-decoration:none;">
-            <button class="secondary-btn" type="button">Open Model Hub</button>
-          </a>
-        </div>
+        <button class="primary-btn" id="analyzeBtn" onclick="analyzeTask()">Analyze & suggest model</button>
+
+        <a href="https://opengradient.ai" target="_blank" style="text-decoration:none;">
+          <button class="secondary-btn" type="button">Open Model Hub</button>
+        </a>
 
         <div class="inline-actions">
           <button class="ghost-btn" type="button" onclick="clearInput()">Clear input</button>
@@ -429,7 +417,7 @@
         </div>
 
         <div class="helper">
-          This tool does not pick one final model for you. It helps turn a vague task into a much clearer search direction, which already makes model discovery far easier.
+          This tool does not pick one final model for you. It turns a vague idea into a much clearer search direction and works fully for free.
           <br><br>
           Tip: press <b>Ctrl + Enter</b> to analyze faster.
         </div>
@@ -688,19 +676,16 @@
     function getMatchedCategories(input) {
       const scores = engine.categories.map(category => {
         let score = 0;
-        let matchedKeywords = [];
 
         category.keywords.forEach(keyword => {
           if (input.includes(keyword)) {
             score += keyword.includes(" ") ? 2 : 1;
-            matchedKeywords.push(keyword);
           }
         });
 
         return {
           ...category,
-          score,
-          matchedKeywords
+          score
         };
       });
 
