@@ -5,102 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OpenGradient AI Model Finder</title>
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg1: #eef2ff;
+      --bg2: #dbeafe;
+      --bg3: #cffafe;
+      --text: #0f172a;
+      --muted: #64748b;
+      --card: rgba(255, 255, 255, 0.9);
+      --border: #dbe4ee;
+      --primary: #06b6d4;
+      --primary-dark: #0891b2;
+      --dark: #0f172a;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --soft: #ecfeff;
+      --soft-border: #bae6fd;
+    }
 
     body {
       margin: 0;
       font-family: Arial, sans-serif;
+      color: var(--text);
       background:
-        radial-gradient(circle at top left, #dbeafe 0%, transparent 28%),
-        radial-gradient(circle at top right, #cffafe 0%, transparent 22%),
-        linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%);
-      color: #0f172a;
+        radial-gradient(circle at top left, var(--bg2) 0%, transparent 30%),
+        radial-gradient(circle at top right, var(--bg3) 0%, transparent 25%),
+        linear-gradient(135deg, var(--bg1), #f8fafc 60%, #e0f2fe);
+      min-height: 100vh;
       padding: 40px 20px;
     }
 
-    .container { max-width: 980px; margin: 0 auto; }
-
-    .hero { margin-bottom: 24px; }
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
 
     .eyebrow {
       display: inline-block;
-      padding: 8px 12px;
+      padding: 8px 14px;
       border-radius: 999px;
-      background: rgba(6, 182, 212, 0.12);
+      background: rgba(6, 182, 212, 0.14);
       color: #0f766e;
       font-size: 13px;
       font-weight: 700;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
 
     h1 {
-      font-size: 42px;
-      line-height: 1.1;
-      margin: 0 0 12px;
-      letter-spacing: -0.02em;
+      margin: 0 0 14px;
+      font-size: 56px;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 900px;
     }
 
     .subtitle {
-      max-width: 760px;
-      color: #475569;
-      font-size: 17px;
+      max-width: 900px;
+      font-size: 18px;
       line-height: 1.6;
+      color: #475569;
       margin-bottom: 28px;
     }
 
-    .grid {
+    .layout {
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 20px;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 22px;
+      align-items: start;
     }
 
-    .panel {
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.8);
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(10px);
-      border-radius: 20px;
-      box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+      border-radius: 22px;
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
       padding: 24px;
     }
 
-    .panel-title {
+    .section-title {
       font-size: 20px;
       font-weight: 700;
       margin: 0 0 8px;
     }
 
-    .panel-subtitle {
-      color: #64748b;
+    .section-subtitle {
+      color: var(--muted);
       font-size: 14px;
-      line-height: 1.5;
+      line-height: 1.6;
       margin-bottom: 18px;
     }
 
     label {
       display: block;
+      margin-bottom: 10px;
       font-size: 14px;
       font-weight: 700;
-      margin-bottom: 10px;
     }
 
     textarea {
       width: 100%;
-      min-height: 130px;
+      min-height: 140px;
       resize: vertical;
-      border-radius: 14px;
       border: 1px solid #cbd5e1;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 16px;
       font-size: 15px;
-      line-height: 1.5;
+      line-height: 1.6;
       outline: none;
       transition: 0.2s ease;
+      color: var(--text);
       background: #fff;
       font-family: Arial, sans-serif;
     }
 
     textarea:focus {
-      border-color: #06b6d4;
-      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.14);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.12);
     }
 
     .chips {
@@ -113,111 +137,133 @@
     .chip {
       border: none;
       background: #e2e8f0;
-      color: #0f172a;
-      padding: 10px 12px;
+      color: var(--text);
+      padding: 11px 14px;
       border-radius: 999px;
-      cursor: pointer;
       font-size: 13px;
-      width: auto;
-      transition: 0.2s ease;
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-weight: 700;
     }
 
-    .chip:hover { background: #cbd5e1; }
+    .chip:hover {
+      background: #cbd5e1;
+      transform: translateY(-1px);
+    }
+
+    .actions {
+      display: grid;
+      gap: 12px;
+    }
+
+    button {
+      border: none;
+      cursor: pointer;
+      transition: 0.18s ease;
+      font-family: Arial, sans-serif;
+    }
 
     .primary-btn,
-    .secondary-btn {
+    .secondary-btn,
+    .ghost-btn {
       width: 100%;
-      border: none;
-      border-radius: 14px;
-      padding: 14px 16px;
+      border-radius: 16px;
+      padding: 15px 16px;
       font-size: 15px;
       font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s ease;
     }
 
     .primary-btn {
-      background: linear-gradient(135deg, #06b6d4, #0891b2);
       color: white;
-      margin-bottom: 12px;
-      box-shadow: 0 10px 24px rgba(6, 182, 212, 0.25);
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 12px 28px rgba(6, 182, 212, 0.22);
     }
 
     .primary-btn:hover {
       transform: translateY(-1px);
-      box-shadow: 0 14px 28px rgba(6, 182, 212, 0.32);
+      box-shadow: 0 16px 32px rgba(6, 182, 212, 0.28);
     }
 
     .primary-btn:disabled {
-      opacity: 0.75;
+      opacity: 0.8;
       cursor: wait;
       transform: none;
       box-shadow: none;
     }
 
     .secondary-btn {
-      background: #0f172a;
       color: white;
+      background: var(--dark);
     }
 
-    .secondary-btn:hover { background: #020617; }
+    .secondary-btn:hover {
+      background: #020617;
+    }
+
+    .ghost-btn {
+      color: var(--text);
+      background: #f8fafc;
+      border: 1px solid var(--border);
+    }
+
+    .ghost-btn:hover {
+      background: #f1f5f9;
+    }
 
     .helper {
       margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 14px;
+      padding: 15px 16px;
+      border-radius: 16px;
       background: #f8fafc;
+      border: 1px solid var(--border);
       color: #475569;
       font-size: 14px;
       line-height: 1.6;
-      border: 1px solid #e2e8f0;
     }
 
-    .result-box {
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
+    .recommendation-stack {
+      display: grid;
       gap: 14px;
     }
 
     .status {
-      padding: 14px 16px;
-      border-radius: 14px;
-      background: #ecfeff;
-      border: 1px solid #bae6fd;
+      min-height: 96px;
+      padding: 16px;
+      border-radius: 16px;
+      background: var(--soft);
+      border: 1px solid var(--soft-border);
       color: #164e63;
       font-size: 14px;
-      line-height: 1.6;
-      min-height: 88px;
+      line-height: 1.7;
+      white-space: pre-line;
     }
 
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+    .mini-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
       padding: 16px;
     }
 
-    .card-label {
+    .mini-label {
       font-size: 12px;
-      font-weight: 700;
-      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      color: #64748b;
+      font-weight: 700;
       margin-bottom: 8px;
     }
 
-    .card-value {
+    .mini-value {
       font-size: 18px;
       font-weight: 700;
-      color: #0f172a;
       min-height: 24px;
     }
 
-    .card-text {
+    .mini-text {
       font-size: 14px;
-      color: #334155;
       line-height: 1.7;
+      color: #334155;
       white-space: pre-line;
       min-height: 24px;
     }
@@ -226,7 +272,6 @@
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 6px;
       min-height: 30px;
     }
 
@@ -238,6 +283,7 @@
       padding: 7px 10px;
       font-size: 12px;
       font-weight: 700;
+      cursor: pointer;
     }
 
     .confidence-bar {
@@ -250,102 +296,199 @@
     }
 
     .confidence-fill {
-      height: 100%;
       width: 0%;
+      height: 100%;
       background: linear-gradient(90deg, #22c55e, #16a34a);
       transition: width 0.35s ease;
     }
 
+    .recent-wrap {
+      margin-top: 18px;
+    }
+
+    .recent-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .recent-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .recent-item {
+      background: white;
+      border: 1px solid var(--border);
+      color: #334155;
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      cursor: pointer;
+      max-width: 100%;
+    }
+
     .footer-note {
-      margin-top: 20px;
+      margin-top: 22px;
       color: #64748b;
       font-size: 13px;
       line-height: 1.6;
     }
 
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
-      h1 { font-size: 34px; }
+    .inline-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: var(--primary);
+      border-radius: 999px;
+      margin-right: 8px;
+      animation: pulse 1.2s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.9); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.5; }
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 24px 14px;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .inline-actions {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="hero">
-      <div class="eyebrow">Community Build • Real AI Discovery Tool</div>
-      <h1>OpenGradient AI Model Finder</h1>
-      <div class="subtitle">
-        Describe your task in natural language and get a smarter starting point for model discovery:
-        category detection, suggested search keywords, confidence level, and a recommended direction.
-      </div>
+    <div class="eyebrow">Community Build • Advanced AI-style Discovery Tool</div>
+    <h1>OpenGradient AI Model Finder</h1>
+    <div class="subtitle">
+      Describe your task in natural language and get a smart starting point for model discovery:
+      detected category, recommended direction, useful search keywords, confidence score, and reusable suggestions.
     </div>
 
-    <div class="grid">
-      <div class="panel">
-        <div class="panel-title">Describe your task</div>
-        <div class="panel-subtitle">
-          Write what you want to do. The tool will ask a real AI model to map your idea to a model direction on OpenGradient.
+    <div class="layout">
+      <div class="card">
+        <div class="section-title">Describe your task</div>
+        <div class="section-subtitle">
+          Write what you want to do. This free version uses a richer local intelligence layer to map your idea into a model search direction.
         </div>
 
-        <label for="input">Task description</label>
-        <textarea id="input" placeholder="Example: I need a model for crypto price prediction with fast response"></textarea>
+        <label for="taskInput">Task description</label>
+        <textarea id="taskInput" placeholder="Example: I need a model for crypto price prediction with fast response and structured output"></textarea>
 
         <div class="chips">
           <button class="chip" onclick="fillPrompt('I need a model for crypto price prediction')">Crypto prediction</button>
           <button class="chip" onclick="fillPrompt('I want fast real-time inference for live data')">Real-time inference</button>
           <button class="chip" onclick="fillPrompt('Help me analyze data and return structured output')">Data analysis</button>
           <button class="chip" onclick="fillPrompt('I need a model for writing and text generation')">Text generation</button>
+          <button class="chip" onclick="fillPrompt('I need a model for classification and scoring')">Classification</button>
+          <button class="chip" onclick="fillPrompt('I need image understanding and visual analysis')">Vision</button>
         </div>
 
-        <button class="primary-btn" id="analyzeBtn" onclick="analyze()">Analyze & suggest model</button>
+        <div class="actions">
+          <button class="primary-btn" id="analyzeBtn" onclick="analyzeTask()">Analyze & suggest model</button>
+          <a href="https://opengradient.ai" target="_blank" style="text-decoration:none;">
+            <button class="secondary-btn" type="button">Open Model Hub</button>
+          </a>
+        </div>
 
-        <a href="https://opengradient.ai" target="_blank">
-          <button class="secondary-btn">Open Model Hub</button>
-        </a>
+        <div class="inline-actions">
+          <button class="ghost-btn" type="button" onclick="clearInput()">Clear input</button>
+          <button class="ghost-btn" type="button" onclick="useRandomExample()">Use random example</button>
+        </div>
 
         <div class="helper">
-          This tool does not pick a final model for you. It gives you a clearer search direction using a real AI response.
+          This tool does not pick one final model for you. It helps turn a vague task into a much clearer search direction, which already makes model discovery far easier.
+          <br><br>
+          Tip: press <b>Ctrl + Enter</b> to analyze faster.
+        </div>
+
+        <div class="recent-wrap">
+          <div class="recent-title">Recent searches</div>
+          <div class="recent-list" id="recentList">
+            <div class="recent-item">No recent searches yet</div>
+          </div>
         </div>
       </div>
 
-      <div class="panel">
-        <div class="panel-title">Recommendation</div>
-        <div class="panel-subtitle">
+      <div class="card">
+        <div class="section-title">Recommendation</div>
+        <div class="section-subtitle">
           Your result appears here after analysis.
         </div>
 
-        <div class="result-box">
-          <div class="status" id="status">
-            Try something like:
-            <br>- "I need a model for crypto prediction"
-            <br>- "I want fast real-time inference"
-            <br>- "Help me analyze data"
+        <div class="recommendation-stack">
+          <div class="status" id="status">Try something like:
+- "I need a model for crypto prediction"
+- "I want fast real-time inference"
+- "Help me analyze data"
+- "I need classification and scoring"</div>
+
+          <div class="mini-card">
+            <div class="mini-label">Detected category</div>
+            <div class="mini-value" id="category">Waiting for input</div>
           </div>
 
-          <div class="card">
-            <div class="card-label">Detected category</div>
-            <div class="card-value" id="category">Waiting for input</div>
+          <div class="mini-card">
+            <div class="mini-label">Recommended direction</div>
+            <div class="mini-text" id="direction">No recommendation yet.</div>
           </div>
 
-          <div class="card">
-            <div class="card-label">Recommended direction</div>
-            <div class="card-text" id="direction">No recommendation yet.</div>
-          </div>
-
-          <div class="card">
-            <div class="card-label">Suggested search keywords</div>
+          <div class="mini-card">
+            <div class="mini-label">Suggested search keywords</div>
             <div class="tags" id="keywords">
               <span class="tag">model search</span>
               <span class="tag">OpenGradient</span>
             </div>
           </div>
 
-          <div class="card">
-            <div class="card-label">Confidence</div>
-            <div class="card-text" id="confidenceText">Waiting for a task description.</div>
+          <div class="mini-card">
+            <div class="mini-label">Best fit profile</div>
+            <div class="mini-text" id="fitProfile">Waiting for analysis.</div>
+          </div>
+
+          <div class="mini-card">
+            <div class="mini-label">Confidence</div>
+            <div class="mini-text" id="confidenceText">Waiting for a task description.</div>
             <div class="confidence-bar">
               <div class="confidence-fill" id="confidenceFill"></div>
             </div>
+          </div>
+
+          <div class="inline-actions">
+            <button class="ghost-btn" type="button" onclick="copyResult()">Copy result</button>
+            <button class="ghost-btn" type="button" onclick="reuseKeywords()">Use keywords as prompt</button>
           </div>
         </div>
       </div>
@@ -357,83 +500,396 @@
   </div>
 
   <script>
+    const examples = [
+      "I need a model for crypto price prediction",
+      "I want fast real-time inference for live market data",
+      "Help me analyze data and return structured output",
+      "I need a model for writing and text generation",
+      "I need a model for classification and scoring",
+      "I need image understanding and visual analysis",
+      "I want sentiment analysis for social content",
+      "I need anomaly detection on financial time-series"
+    ];
+
+    const engine = {
+      categories: [
+        {
+          name: "Forecasting / Prediction",
+          fit: "Best for time-series, market dynamics, trend estimation, future value prediction.",
+          keywords: ["predict", "prediction", "forecast", "price", "crypto", "market", "trend", "time-series", "signal"],
+          searchTerms: ["forecasting", "prediction", "time-series", "crypto model", "price forecast"],
+          directions: [
+            "Start with time-series and trend-oriented models. Prioritize architectures suited for sequential or market-driven data.",
+            "Look for prediction-focused models that can handle temporal patterns, market signals, or financial movement estimation.",
+            "Search for models designed for forecasting, price estimation, or dynamic trend analysis."
+          ],
+          baseConfidence: 90
+        },
+        {
+          name: "Real-time Inference",
+          fit: "Best for low-latency decisions, live data, instant scoring, production responsiveness.",
+          keywords: ["real-time", "realtime", "fast", "live", "latency", "instant", "stream", "speed", "low latency"],
+          searchTerms: ["real-time inference", "fast model", "low latency", "optimized inference"],
+          directions: [
+            "Look for lightweight or optimized low-latency models. Prioritize speed, responsiveness, and efficient inference behavior.",
+            "Search for speed-first models intended for live or production-style inference workloads.",
+            "Focus on optimized models that can process frequent updates with minimal latency."
+          ],
+          baseConfidence: 87
+        },
+        {
+          name: "Data Analysis",
+          fit: "Best for structured output, analytical workflows, summaries, reasoning over data.",
+          keywords: ["data", "analysis", "analytics", "structured", "table", "tabular", "summary", "summarize", "reasoning"],
+          searchTerms: ["data analysis", "analytics model", "structured output", "reasoning model"],
+          directions: [
+            "Look for analytics or structured reasoning models that can return interpretable outputs, summaries, or machine-readable results.",
+            "Search for models that emphasize structured output, reasoning, or analytical workflow support.",
+            "Focus on models that can transform data-heavy tasks into organized, explainable outputs."
+          ],
+          baseConfidence: 86
+        },
+        {
+          name: "Text Generation",
+          fit: "Best for writing, drafting, prompt-based generation, content creation, instruction following.",
+          keywords: ["text", "write", "writing", "content", "generate", "generation", "draft", "prompt", "copy"],
+          searchTerms: ["text generation", "LLM", "instruction model", "prompt model"],
+          directions: [
+            "Start with general language models or instruction-following models. Focus on generation quality, prompt following, and output clarity.",
+            "Look for LLM-style models suited for drafting, writing, prompt response, or instruction-based generation.",
+            "Search for models optimized for clean text generation and controllable output."
+          ],
+          baseConfidence: 88
+        },
+        {
+          name: "Classification / Scoring",
+          fit: "Best for labels, ranking, detection, categorization, probability or score-based outputs.",
+          keywords: ["classify", "classification", "score", "scoring", "label", "ranking", "rank", "detect", "detection"],
+          searchTerms: ["classification model", "scoring model", "labeling", "ranking"],
+          directions: [
+            "Look for classification or scoring-oriented models that output labels, probabilities, or ranked results.",
+            "Search for models designed for detection, categorization, or confidence-based decisions.",
+            "Focus on models that clearly support labels, scores, thresholds, or ranking outputs."
+          ],
+          baseConfidence: 84
+        },
+        {
+          name: "Vision / Image Understanding",
+          fit: "Best for visual analysis, image interpretation, detection, multimodal workflows.",
+          keywords: ["image", "vision", "visual", "photo", "screenshot", "object", "detect image", "multimodal", "video"],
+          searchTerms: ["vision model", "image understanding", "visual analysis", "multimodal"],
+          directions: [
+            "Look for vision or multimodal models that can process image inputs and return analysis, labels, or detections.",
+            "Search for models built for image understanding, object detection, or visual reasoning.",
+            "Focus on multimodal model types if your workflow combines text with visual input."
+          ],
+          baseConfidence: 85
+        },
+        {
+          name: "Sentiment / Language Understanding",
+          fit: "Best for tone, intent, sentiment, classification over text meaning.",
+          keywords: ["sentiment", "tone", "intent", "emotion", "opinion", "language understanding", "nlp"],
+          searchTerms: ["sentiment analysis", "intent detection", "NLP classification", "language understanding"],
+          directions: [
+            "Look for NLP or sentiment-focused models that classify tone, intent, polarity, or emotional direction.",
+            "Search for models specialized in language understanding, intent detection, or sentiment scoring.",
+            "Focus on models that are strong at interpreting meaning rather than generating long text."
+          ],
+          baseConfidence: 82
+        },
+        {
+          name: "Anomaly Detection",
+          fit: "Best for unusual patterns, deviations, monitoring, risk signals, outlier detection.",
+          keywords: ["anomaly", "anomalies", "outlier", "deviation", "fraud", "monitoring", "risk", "abnormal"],
+          searchTerms: ["anomaly detection", "outlier model", "risk detection", "monitoring model"],
+          directions: [
+            "Look for anomaly or outlier-detection models that can identify unusual patterns or risky behavior in structured streams.",
+            "Search for model types intended for deviations, monitoring, or abnormal event detection.",
+            "Focus on models that support detection of unusual movements or risk-related patterns."
+          ],
+          baseConfidence: 83
+        }
+      ]
+    };
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
     function fillPrompt(text) {
-      document.getElementById("input").value = text;
+      $("taskInput").value = text;
+      analyzeTask();
+    }
+
+    function clearInput() {
+      $("taskInput").value = "";
+      $("taskInput").focus();
+    }
+
+    function useRandomExample() {
+      const pick = examples[Math.floor(Math.random() * examples.length)];
+      $("taskInput").value = pick;
+      analyzeTask();
+    }
+
+    document.addEventListener("keydown", function (e) {
+      if (e.ctrlKey && e.key === "Enter") {
+        analyzeTask();
+      }
+    });
+
+    function saveRecentSearch(text) {
+      const key = "og_model_finder_recent";
+      let items = JSON.parse(localStorage.getItem(key) || "[]");
+      items = [text, ...items.filter(item => item !== text)].slice(0, 6);
+      localStorage.setItem(key, JSON.stringify(items));
+      renderRecentSearches();
+    }
+
+    function renderRecentSearches() {
+      const key = "og_model_finder_recent";
+      const list = JSON.parse(localStorage.getItem(key) || "[]");
+      const wrap = $("recentList");
+      wrap.innerHTML = "";
+
+      if (!list.length) {
+        wrap.innerHTML = '<div class="recent-item">No recent searches yet</div>';
+        return;
+      }
+
+      list.forEach(item => {
+        const el = document.createElement("button");
+        el.className = "recent-item";
+        el.type = "button";
+        el.textContent = item;
+        el.onclick = () => {
+          $("taskInput").value = item;
+          analyzeTask();
+        };
+        wrap.appendChild(el);
+      });
     }
 
     function setKeywords(words) {
-      const box = document.getElementById("keywords");
+      const box = $("keywords");
       box.innerHTML = "";
       words.forEach(word => {
         const span = document.createElement("span");
         span.className = "tag";
-        span.innerText = word;
+        span.textContent = word;
+        span.onclick = () => {
+          $("taskInput").value = "I need a model for " + word;
+          analyzeTask();
+        };
         box.appendChild(span);
       });
     }
 
-    function setLoadingState() {
-      document.getElementById("status").innerText = "Analyzing your request...";
-      document.getElementById("category").innerText = "...";
-      document.getElementById("direction").innerText = "Thinking...";
-      document.getElementById("confidenceText").innerText = "Analyzing...";
-      document.getElementById("confidenceFill").style.width = "18%";
-      setKeywords(["analyzing", "task", "intent"]);
+    function getMatchedCategories(input) {
+      const scores = engine.categories.map(category => {
+        let score = 0;
+        let matchedKeywords = [];
+
+        category.keywords.forEach(keyword => {
+          if (input.includes(keyword)) {
+            score += keyword.includes(" ") ? 2 : 1;
+            matchedKeywords.push(keyword);
+          }
+        });
+
+        return {
+          ...category,
+          score,
+          matchedKeywords
+        };
+      });
+
+      scores.sort((a, b) => b.score - a.score);
+      return scores;
     }
 
-    function setErrorState(message) {
-      document.getElementById("status").innerText = message;
-      document.getElementById("category").innerText = "Unavailable";
-      document.getElementById("direction").innerText = "The AI response could not be loaded right now.";
-      document.getElementById("confidenceText").innerText = "Please try again.";
-      document.getElementById("confidenceFill").style.width = "0%";
-      setKeywords(["retry", "server", "ai"]);
+    function makeConfidence(score, overlapCount, baseConfidence) {
+      let value = baseConfidence;
+
+      if (score <= 1) value -= 16;
+      if (score >= 4) value += 4;
+      if (overlapCount >= 2) value -= 8;
+      if (overlapCount >= 3) value -= 12;
+
+      if (value > 96) value = 96;
+      if (value < 42) value = 42;
+
+      return value;
     }
 
-    async function analyze() {
-      const input = document.getElementById("input").value.trim();
-      const btn = document.getElementById("analyzeBtn");
+    function confidenceMessage(value, overlapCount) {
+      if (value >= 88 && overlapCount === 1) {
+        return "High confidence based on strong category-specific signals.";
+      }
+      if (value >= 74) {
+        return "Good confidence, though the task overlaps with nearby categories.";
+      }
+      if (value >= 58) {
+        return "Moderate confidence. Your task is broad and could map to multiple model types.";
+      }
+      return "Lower confidence. Try adding clearer words like prediction, analysis, text, scoring, or real-time.";
+    }
 
-      if (!input) {
-        document.getElementById("status").innerText = "Please describe your task first.";
-        document.getElementById("category").innerText = "No category detected";
-        document.getElementById("direction").innerText = "Add a short description of what you want the model to do.";
-        document.getElementById("confidenceText").innerText = "Low confidence because no task was provided.";
-        document.getElementById("confidenceFill").style.width = "10%";
-        setKeywords(["text", "data", "prediction", "real-time"]);
+    function animateConfidence(target) {
+      const fill = $("confidenceFill");
+      fill.style.width = "0%";
+      let current = 0;
+      const step = Math.max(1, Math.round(target / 35));
+
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        fill.style.width = current + "%";
+      }, 12);
+    }
+
+    function typeText(element, text, speed = 8) {
+      return new Promise(resolve => {
+        element.textContent = "";
+        let i = 0;
+        const timer = setInterval(() => {
+          element.textContent += text.charAt(i);
+          i++;
+          if (i >= text.length) {
+            clearInterval(timer);
+            resolve();
+          }
+        }, speed);
+      });
+    }
+
+    function buildDirection(primary, secondary) {
+      const primaryDirection = primary.directions[Math.floor(Math.random() * primary.directions.length)];
+
+      if (!secondary || secondary.score === 0) {
+        return primaryDirection;
+      }
+
+      return (
+        primaryDirection +
+        "\n\nSecondary signal detected: " +
+        secondary.name +
+        ". You may also want models that support this adjacent need."
+      );
+    }
+
+    function buildStatus(primary, secondary, overlapCount) {
+      if (!primary || primary.score === 0) {
+        return "The task is still too broad to classify clearly.\n\nTry using more explicit words like:\n- prediction\n- analysis\n- text generation\n- real-time inference\n- classification";
+      }
+
+      if (overlapCount >= 2 && secondary && secondary.score > 0) {
+        return "Analysis complete.\nPrimary category: " + primary.name + "\nSecondary signal: " + secondary.name;
+      }
+
+      return "Analysis complete.\nDetected category: " + primary.name;
+    }
+
+    async function analyzeTask() {
+      const inputRaw = $("taskInput").value.trim();
+      const input = inputRaw.toLowerCase();
+      const btn = $("analyzeBtn");
+
+      if (!inputRaw) {
+        $("status").textContent = "Please describe your task first.";
+        $("category").textContent = "No category detected";
+        $("direction").textContent = "Add a short description of what you want the model to do.";
+        $("fitProfile").textContent = "Waiting for analysis.";
+        $("confidenceText").textContent = "Low confidence because no task was provided.";
+        $("confidenceFill").style.width = "10%";
+        setKeywords(["text", "analysis", "prediction", "real-time"]);
         return;
       }
 
       btn.disabled = true;
-      btn.innerText = "Analyzing...";
-      setLoadingState();
+      btn.innerHTML = '<span class="pulse"></span>Analyzing...';
 
-      try {
-        const response = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task: input })
-        });
+      $("status").textContent = "Analyzing your request...";
+      $("category").textContent = "...";
+      $("direction").textContent = "Thinking...";
+      $("fitProfile").textContent = "Building a search profile...";
+      $("confidenceText").textContent = "Analyzing confidence...";
+      $("confidenceFill").style.width = "14%";
+      setKeywords(["analyzing", "intent", "model search"]);
 
-        const data = await response.json();
+      await new Promise(resolve => setTimeout(resolve, 850));
 
-        if (!response.ok) {
-          throw new Error(data.error || "Request failed");
-        }
+      const matched = getMatchedCategories(input);
+      const primary = matched[0];
+      const secondary = matched[1];
+      const overlapCount = matched.filter(item => item.score > 0).length;
 
-        document.getElementById("status").innerText = data.status;
-        document.getElementById("category").innerText = data.category;
-        document.getElementById("direction").innerText = data.direction;
-        document.getElementById("confidenceText").innerText = data.confidenceMessage;
-        document.getElementById("confidenceFill").style.width = `${data.confidence}%`;
-        setKeywords(Array.isArray(data.keywords) ? data.keywords : ["OpenGradient", "model search"]);
-      } catch (error) {
-        setErrorState(error.message || "Something went wrong.");
-      } finally {
+      if (!primary || primary.score === 0) {
+        await typeText($("status"), buildStatus(null, null, 0));
+        await typeText($("category"), "Unclear / Mixed task");
+        await typeText($("direction"), "Try rewriting your request with more specific task words. Mention whether you want text generation, data analysis, prediction, classification, vision, or real-time inference.");
+        await typeText($("fitProfile"), "Best fit is unclear because the current input is too broad.");
+        $("confidenceText").textContent = "Moderate confidence because no strong category could be detected.";
+        animateConfidence(44);
+        setKeywords(["text generation", "data analysis", "prediction", "classification"]);
+        saveRecentSearch(inputRaw);
         btn.disabled = false;
-        btn.innerText = "Analyze & suggest model";
+        btn.textContent = "Analyze & suggest model";
+        return;
       }
+
+      const confidence = makeConfidence(primary.score, overlapCount, primary.baseConfidence);
+      const direction = buildDirection(primary, secondary);
+      const fitProfile =
+        primary.fit +
+        (secondary && secondary.score > 0
+          ? "\n\nSecondary fit hint: " + secondary.fit
+          : "");
+
+      const mergedKeywords = [...new Set([
+        ...primary.searchTerms,
+        ...(secondary && secondary.score > 0 ? secondary.searchTerms.slice(0, 2) : [])
+      ])].slice(0, 6);
+
+      await typeText($("status"), buildStatus(primary, secondary, overlapCount));
+      await typeText($("category"), primary.name);
+      await typeText($("direction"), direction, 6);
+      await typeText($("fitProfile"), fitProfile, 5);
+      $("confidenceText").textContent = confidenceMessage(confidence, overlapCount);
+      animateConfidence(confidence);
+      setKeywords(mergedKeywords);
+
+      saveRecentSearch(inputRaw);
+
+      btn.disabled = false;
+      btn.textContent = "Analyze & suggest model";
     }
+
+    function copyResult() {
+      const text = [
+        "Category: " + $("category").textContent,
+        "Direction: " + $("direction").textContent,
+        "Best fit: " + $("fitProfile").textContent,
+        "Confidence: " + $("confidenceText").textContent,
+        "Keywords: " + Array.from(document.querySelectorAll(".tag")).map(tag => tag.textContent).join(", ")
+      ].join("\n\n");
+
+      navigator.clipboard.writeText(text).then(() => {
+        $("status").textContent = "Result copied to clipboard.";
+      });
+    }
+
+    function reuseKeywords() {
+      const tags = Array.from(document.querySelectorAll(".tag")).map(tag => tag.textContent);
+      if (!tags.length) return;
+      $("taskInput").value = "I need a model for " + tags.join(", ");
+      $("taskInput").focus();
+    }
+
+    renderRecentSearches();
   </script>
 </body>
 </html>
